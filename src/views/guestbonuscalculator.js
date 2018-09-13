@@ -91,7 +91,6 @@ class GuestBonusCalculator extends Component {
             bonus: 0,
             msg: undefined
     });  
-          
   }
    handleChange1(e) {
      //console.log(e.target.name);
@@ -116,6 +115,8 @@ class GuestBonusCalculator extends Component {
                   branchtarget: branch.target
           });  
       }
+        else
+        { this.handleReset ();}
   }
 
   handleCalculateBonus() {
@@ -187,13 +188,13 @@ class GuestBonusCalculator extends Component {
             <FormControl fullWidth className={classes.formControl}>
               <InputLabel htmlFor="branchname">Branch</InputLabel><br/><br/>
               <Select
+                align="left"
                 value={this.state.branchname}
                 onChange={this.handleChange}
                 inputProps={{
                   name: 'branchname',
                   id: 'branchname',
-                }}
-                autoWidth                
+                }}          
               >
               <MenuItem value="">
                 <em>None</em>

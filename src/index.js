@@ -7,8 +7,8 @@ const rootElement = document.querySelector('#root');
 if (rootElement) {
   render(<Demo />, rootElement);
 }
-  */
-  
+  */  
+
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";

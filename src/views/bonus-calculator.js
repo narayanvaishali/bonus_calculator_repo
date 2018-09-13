@@ -52,6 +52,7 @@ class BonusCalculator extends Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleChange1 = this.handleChange1.bind(this);
+    this.handleReset = this.handleReset.bind(this);
     this.handleCalculateBonus = this.handleCalculateBonus.bind(this);
   }
    handleChange1(e) {
@@ -59,37 +60,58 @@ class BonusCalculator extends Component {
      // console.log(e.target.value);
      this.setState({ [e.target.name]: e.target.value });
    }
+  handleReset ()
+  {
+      this.setState({
+            branchkey : "",
+            branchname : "",
+            branchtarget: 0,
+            noOfShift: 0,
+            grossProfit: 0,
+            branch: "",
+           // branches: [],
+            bonus: 0,
+            msg: undefined
+    });  
+  }
   handleChange(e) {
-   /* console.log('here');
+   /*console.log('here');
     console.log(e.target.name);
     console.log(e.target.value);*/
     const { branches } = this.state;
     this.setState({ [e.target.name]: e.target.value });
     const branch = branches.find(b => b.key === e.target.value);
    // console.log(branch);
-
-   this.setState({
-          branchkey : branch.key,
-          branch: branch.branchname,
-          branchtarget: branch.target
-   });  
+    if(e.target.value != "")
+      {
+        this.setState({
+                branchkey : branch.key,
+                branch: branch.branchname,
+                branchtarget: branch.target
+        });  
+      }
+      else
+        { this.handleReset ();}
   }
 
   handleCalculateBonus() {
     const { branchtarget, noOfShift, grossProfit } = this.state;
    // console.log('handleCalculateBonus ');
   //  console.log(this.state);
-    bonusCalculator(branchtarget, noOfShift, grossProfit, (errMsg, bonus) => {
-      if (errMsg) {
-        this.setState({ bonus: bonus, msg: errMsg });
-        return;
-      }
+      if(branchtarget != "" && noOfShift != "" && grossProfit != "")
+        {
+            bonusCalculator(branchtarget, noOfShift, grossProfit, (errMsg, bonus) => {
+                if (errMsg) {
+                  this.setState({ bonus: bonus, msg: errMsg });
+                  return;
+                }
 
-      this.setState({
-        bonus: bonus,
-        msg: undefined
-      });
-    });
+                this.setState({
+                  bonus: bonus,
+                  msg: undefined
+                });
+            });
+        }
   }
 
   componentDidMount() {
@@ -106,11 +128,18 @@ class BonusCalculator extends Component {
 
     let menuItem = branches.map(v => (
         //console.log(v.Target);
-        <MenuItem value={v.key} >{v.branchname}</MenuItem>
+        <MenuItem value={v.key} key={v.key}>{v.branchname}</MenuItem>
          
       ));
 
     return (
+      <div
+        className={classes.parallax}
+        style={{
+          backgroundImage: `linear-gradient(rgb(148, 132, 223), rgba(13, 97, 146, 0.89))`,
+          minHeight: "100vh"
+        }}
+      >
       <Layout drawer={true} routerHistory={this.props.history}>
         <Typography variant="display1">Bonus Calculator</Typography>
 
@@ -118,10 +147,15 @@ class BonusCalculator extends Component {
           {/*<pre>{JSON.stringify(branches, null, 2)}</pre>*/}
           {/*<pre>{optionTemplate}</pre>*/}
           <form>
-            <FormControl  className={classes.formControl}>
+            <FormControl fullWidth className={classes.formControl}>
+               <div align="right">
                 <Button variant="contained" color="primary" className={classes.button} onClick={this.handleCalculateBonus}>
                         Calculate Bonus
                  </Button>
+                 <Button variant="contained" color="primary" className={classes.button} onClick={this.handleReset}>
+                        Reset
+                 </Button>                 
+              </div>
                  <br/><br/>
               </FormControl>
             <FormControl fullWidth className={classes.formControl}>
@@ -135,10 +169,13 @@ class BonusCalculator extends Component {
                 }}
                 autoWidth                
               >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
                 {menuItem}
             </Select>
             </FormControl>
-
+            {/* 
             <FormControl fullWidth className={classes.formControl}>
               <InputLabel htmlFor="branchtarget">Target</InputLabel>
               <Input readOnly
@@ -149,7 +186,7 @@ class BonusCalculator extends Component {
                 value={this.state.branchtarget}
                 type="number"
               />
-            </FormControl>
+            </FormControl>*/}
             <FormControl fullWidth className={classes.formControl}>
               <InputLabel htmlFor="noOfShift">No. of Shifts</InputLabel>
               <Input
@@ -157,7 +194,7 @@ class BonusCalculator extends Component {
                   name: "noOfShift",
                   id: "noOfShift"
                 }}
-               // value={this.state.noOfShift}
+                value={this.state.noOfShift}
                 type="number"
                 onChange={this.handleChange1}
               />
@@ -171,7 +208,7 @@ class BonusCalculator extends Component {
                   name: "grossProfit",
                   id: "grossProfit"
                 }}
-                //value={this.state.grossProfit}
+                value={this.state.grossProfit}
                 type="number"
                 onChange={this.handleChange1}
               />
@@ -189,6 +226,7 @@ class BonusCalculator extends Component {
           ) : null}
         </Paper>
       </Layout>
+      </div>
     );
   }
 }
